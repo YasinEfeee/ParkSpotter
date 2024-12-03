@@ -5,9 +5,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog,
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
-from GUI_SavedParkingWindow import SavedParkingWindow
-from parking_manager import ParkingManager
-
 
 class SelectionWindow(QMainWindow):
     def __init__(self):
@@ -33,13 +30,20 @@ class SelectionWindow(QMainWindow):
 
     def open_image_window(self):
         """Görsel yükleme ve park alanı seçimi için pencereyi aç."""
-        self.image_window = MainWindow()
-        self.image_window.show()
-        self.close()
+        try:
+            from GUI_MainWindow import MainWindow
+            self.image_window = MainWindow()
+            self.image_window.show()
+            self.close()
+        except Exception as e:
+            import traceback
+            print(f"Analiz sırasında bir hata oluştu: {e}")
+            print(f"Detaylı İzleme: {traceback.print_exc()} ")
 
 
     def open_saved_parking_window(self):
         """Kaydedilmiş park alanı kullanma penceresini aç."""
+        from GUI_SavedParkingWindow import SavedParkingWindow
         self.saved_parking_window = SavedParkingWindow()
         self.saved_parking_window.show()
         self.close()

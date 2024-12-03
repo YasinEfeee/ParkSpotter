@@ -5,9 +5,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog,
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
-from GUI_MainWindow import MainWindow
-from GUI_SelectionWindow import SelectionWindow
-
 
 class SavedParkingWindow(QMainWindow):
     def __init__(self):
@@ -37,6 +34,7 @@ class SavedParkingWindow(QMainWindow):
 
     def go_back(self):
         """Geri butonuna basıldığında Görsel Yükle ekranına döner."""
+        from GUI_SelectionWindow import SelectionWindow
         self.image_window = SelectionWindow()
         self.image_window.show()
         self.close()

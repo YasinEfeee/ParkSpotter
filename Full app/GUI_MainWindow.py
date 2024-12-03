@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog,
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
-from GUI_SavedParkingWindow import SavedParkingWindow
 from parking_manager import ParkingManager
 
 
@@ -263,6 +262,7 @@ class MainWindow(QMainWindow):
 
     def go_back(self):
         """Geri butonuna basıldığında ana menüye döner."""
+        from GUI_SelectionWindow import SelectionWindow # Lazy import
         self.selection_window = SelectionWindow()
         self.selection_window.show()
         self.close()
