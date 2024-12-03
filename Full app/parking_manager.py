@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 import numpy as np
 
 
+
 class ParkingManager:
     def __init__(self):
         self.points = []
@@ -19,6 +20,7 @@ class ParkingManager:
         self.scaled_image = cv2.resize(self.image, None, fx=self.SCALE_FACTOR, fy=self.SCALE_FACTOR,
                                        interpolation=cv2.INTER_AREA)
 
+
     def reset(self):
         """Tüm park alanlarını ve noktaları sıfırlar."""
         self.points = []
@@ -27,6 +29,7 @@ class ParkingManager:
             self.image = self.original_image.copy()
             self.scaled_image = cv2.resize(self.image, None, fx=self.SCALE_FACTOR, fy=self.SCALE_FACTOR,
                                            interpolation=cv2.INTER_AREA)
+
 
     def update_display(self):
         """OpenCV penceresini günceller."""
@@ -53,6 +56,7 @@ class ParkingManager:
         else:
             print("Silinecek nokta yok.")
 
+
     def remove_last_rectangle(self):
         """Son eklenen park alanını siler ve görüntüyü günceller."""
         if self.rectangles:
@@ -71,6 +75,7 @@ class ParkingManager:
             if self.is_point_inside_rectangle(point, rect):
                 return True
         return False
+
 
     def is_point_inside_rectangle(self, point, rectangle):
         """Bir noktanın belirli bir dikdörtgenin içinde olup olmadığını kontrol eder."""
@@ -113,6 +118,7 @@ class ParkingManager:
         cv2.destroyAllWindows()
         self.opencv_window_open = False  # Pencerenin kapandığını işaretle
 
+
     def select_points(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN:
             real_x = int(x / self.SCALE_FACTOR)
@@ -132,6 +138,7 @@ class ParkingManager:
 
             if len(self.points) == 4:
                 self.draw_rectangle()
+
 
     def draw_rectangle(self):
         if len(self.points) == 4:
@@ -153,7 +160,7 @@ class ParkingManager:
 
 
     def check_parking_status(self, image_path):
-        from App_model_and_prediciton import get_vehicle_detections, is_inside_rectangle_for_cars
+        from model_and_prediciton import get_vehicle_detections, is_inside_rectangle_for_cars
 
         if self.image is None:
             QMessageBox.critical(None, "Hata", "Görüntü yüklenemedi.")
