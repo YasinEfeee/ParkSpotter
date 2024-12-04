@@ -1,7 +1,9 @@
+#parking_manager.py
 import cv2
 from PyQt5.QtWidgets import QMessageBox
 import numpy as np
-
+import os
+import json
 
 
 class ParkingManager:
@@ -157,6 +159,49 @@ class ParkingManager:
 
             self.points = []
             self.update_display()
+
+
+    def save_parking_data(self, image_path):
+        """
+        Park alanlarını ve seçilen dikdörtgenleri belirtilen klasör yapısında kaydeder.
+        """
+        try:
+            if len(self.rectangles) < 1:
+                QMessageBox.warning(None, "Uyarı", "En az bir park alanı seçmelisiniz.")
+                return
+
+            # Ana klasörü oluştur
+            base_dir = "data_base"
+            if not os.path.exists(base_dir):
+                os.makedirs(base_dir)
+
+            # Yeni bir park alanı için klasör oluştur
+            parking_lot_count = len(os.listdir(base_dir)) + 1
+            parking_lot_dir = os.path.join(base_dir, f"parking_lot_{parking_lot_count}")
+            os.makedirs(parking_lot_dir, exist_ok=True)
+
+            # Görüntüyü kaydet
+            image_name = "original_image.jpg"
+            saved_image_path = os.path.join(parking_lot_dir, image_name)
+            if not cv2.imwrite(saved_image_path, self.image):
+                raise Exception(f"Görüntü {saved_image_path} yoluna kaydedilemedi.")
+
+            # Her dikdörtgeni ayrı bir JSON dosyası olarak kaydet
+            for i, rect in enumerate(self.rectangles):
+                spot_dir = os.path.join(parking_lot_dir, f"parking_spot_{i + 1}.json")
+                parking_spot_data = {
+                    "spot_id": i + 1,
+                    "coordinates": rect
+                }
+                with open(spot_dir, "w") as json_file:
+                    json.dump(parking_spot_data, json_file, indent=4)
+
+            QMessageBox.information(None, "Başarılı", f"Park alanı {parking_lot_dir} klasörüne kaydedildi.")
+        except Exception as e:
+            import traceback
+            error_message = f"Hata oluştu: {e}\n{traceback.format_exc()}"
+            print(error_message)
+            QMessageBox.critical(None, "Kaydetme Hatası", error_message)
 
 
     def check_parking_status(self, image_path):

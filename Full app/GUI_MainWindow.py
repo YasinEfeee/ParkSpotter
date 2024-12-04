@@ -1,9 +1,11 @@
+#GUI_MainWindow.py
 import sys
 import cv2
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QLabel, QVBoxLayout, QWidget, QMessageBox
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
+from mpl_toolkits.axisartist import FloatingAxes
 
 from parking_manager import ParkingManager
 
@@ -13,6 +15,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Park Alanı Tespiti")
         self.setGeometry(100, 100, 800, 600)
+        self.analysis_done = False  # Analiz yapılıp yapılmadığını kontrol eden bayrak
 
         self.manager = ParkingManager()
 
@@ -34,6 +37,18 @@ class MainWindow(QMainWindow):
         self.load_image_button.clicked.connect(self.load_image)
         layout.addWidget(self.load_image_button)
 
+        # "Kaydet ve Analiz Et" Butonu
+        self.save_and_analyze_button = QPushButton("Kaydet ve Analiz Et")
+        self.save_and_analyze_button.clicked.connect(self.save_and_analyze)
+        self.save_and_analyze_button.setEnabled(False)  # Başlangıçta devre dışı
+        layout.addWidget(self.save_and_analyze_button)
+
+        # Park Alanı Seçimini Bitir Butonu
+        self.finish_selection_button = QPushButton("Park Alanı Seçimini Bitir")
+        self.finish_selection_button.clicked.connect(self.finish_selection)
+        self.finish_selection_button.setEnabled(False)  # Başlangıçta devre dışı
+        layout.addWidget(self.finish_selection_button)
+
         # "Park Alanı Seç" butonu
         self.select_parking_button = QPushButton("Park Alanı Seç")
         self.select_parking_button.clicked.connect(self.select_parking)
@@ -52,13 +67,8 @@ class MainWindow(QMainWindow):
         self.remove_point_button.setEnabled(False)
         layout.addWidget(self.remove_point_button)
 
-        # "Analiz" butonu
-        self.analyze_button = QPushButton("Analiz")
-        self.analyze_button.clicked.connect(self.analyze)
-        self.analyze_button.setEnabled(False)  # Başlangıçta devre dışı
-        layout.addWidget(self.analyze_button)
 
-        # "Park Alanı Seçimini İptal Et" butonu
+        #"Park Alanı Seçimini İptal Et" butonu
         self.cancel_button = QPushButton("Park Alanı Seçimini İptal Et")
         self.cancel_button.clicked.connect(self.cancel_operation)
         self.cancel_button.setEnabled(False)
@@ -167,31 +177,38 @@ class MainWindow(QMainWindow):
             self.select_parking_button.setEnabled(True)
             self.remove_rectangle_button.setEnabled(False)
             self.remove_point_button.setEnabled(False)
-            self.analyze_button.setEnabled(False)  # Eski analizleri engelle
+            self.save_and_analyze_button.setEnabled(False)
             self.cancel_button.setEnabled(False)
+            self.finish_selection_button.setEnabled(True)
+
             QMessageBox.information(self, "Başarılı", "Görüntü başarıyla yüklendi.")
 
 
-    def select_parking(self):
-        if self.image is not None:
-            # "Park Durumu" penceresi açıksa kapat
-            if cv2.getWindowProperty("Park Durumu", cv2.WND_PROP_VISIBLE) >= 1:
-                cv2.destroyWindow("Park Durumu")
+    def finish_selection(self):
+        """Park alanı seçimini bitirir ve analiz işlemini etkinleştirir."""
+        if len(self.manager.rectangles) < 1:
+            QMessageBox.warning(self, "Uyarı", "En az bir park alanı seçmelisiniz!")
+            return
+
+        if cv2.getWindowProperty("Park Alanlarini Sec", cv2.WND_PROP_VISIBLE) >= 1:
+            self.manager.opencv_window_open = False
+            cv2.destroyWindow("Park Alanlarini Sec")
+
+        self.load_image_button.setEnabled(True)
+        self.save_and_analyze_button.setEnabled(True)
+        self.remove_point_button.setEnabled(False)
+        self.remove_rectangle_button.setEnabled(False)
+        self.cancel_button.setEnabled(False)
+        self.finish_selection_button.setEnabled(False)
+
+        QMessageBox.information(self, "Bilgi", "Park alanı seçimini tamamladınız."
+                                               "Şimdi analiz yapıp park alanlarını kaydedebilirsiniz.")
 
 
-            self.analyze_button.setEnabled(True)
-            self.remove_rectangle_button.setEnabled(True)
-            self.remove_point_button.setEnabled(True)
-            self.cancel_button.setEnabled(True)
-
-            self.manager.start_parking_selection()
-
-
-    def analyze(self):
+    def save_and_analyze(self):
         """
-            Park alanlarını analiz eden metot.
+        Park alanlarını analiz eder ve kullanıcıya kaydetmek isteyip istemediğini sorar.
         """
-        print("deneme")
         # Görüntü ve park alanı kontrolü
         if not self.image_path:
             QMessageBox.warning(
@@ -210,6 +227,10 @@ class MainWindow(QMainWindow):
             )
             return
 
+        if len(self.manager.rectangles) < 1:
+            QMessageBox.warning(self, "Uyarı", "Analiz yapmak için en az bir park alanı seçmelisiniz!")
+            return
+
         # Eğer "Park Durumu" penceresi zaten açık ise uyarı ver
         if cv2.getWindowProperty("Park Durumu", cv2.WND_PROP_VISIBLE) >= 1:
             QMessageBox.information(
@@ -219,22 +240,49 @@ class MainWindow(QMainWindow):
             )
             return
 
-        print("Analiz ediliyor...")
-
-        self.remove_rectangle_button.setEnabled(False)
-        self.remove_point_button.setEnabled(False)
-        self.cancel_button.setEnabled(False)
-
         # Eğer "Park Alanlarını Seç" açık ise kapat
         if cv2.getWindowProperty("Park Alanlarini Sec", cv2.WND_PROP_VISIBLE) >= 1:
             self.manager.opencv_window_open = False
             cv2.destroyWindow("Park Alanlarini Sec")
 
+
         # Park durumu analizini başlat
         try:
+            print("Analiz ediliyor...")
             self.manager.check_parking_status(self.image_path)
         except Exception as e:
             print(f"Analiz sırasında bir hata oluştu: {e}")
+
+
+        # Kullanıcıya kaydetmek isteyip istemediğini sor
+        reply = QMessageBox.question(
+            self,
+            "Kaydetme Onayı",
+            "Analiz tamamlandı. Kaydetmek istiyor musunuz?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            self.manager.save_parking_data(self.image_path)
+        else:
+            QMessageBox.information(self, "Bilgi", "Veriler kaydedilmedi.")
+
+
+    def select_parking(self):
+        if self.image is not None:
+            # "Park Durumu" penceresi açıksa kapat
+            if cv2.getWindowProperty("Park Durumu", cv2.WND_PROP_VISIBLE) >= 1:
+                cv2.destroyWindow("Park Durumu")
+
+            self.finish_selection_button.setEnabled(True)
+            self.load_image_button.setEnabled(False)
+            self.remove_rectangle_button.setEnabled(True)
+            self.remove_point_button.setEnabled(True)
+            self.cancel_button.setEnabled(True)
+            self.save_and_analyze_button.setEnabled(False)
+
+            self.manager.start_parking_selection()
 
 
     def cancel_operation(self):
@@ -244,10 +292,12 @@ class MainWindow(QMainWindow):
             cv2.destroyWindow("Park Alanlarini Sec")
             self.manager.reset()
             QMessageBox.information(self, "İptal Edildi", "İşlem iptal edildi ve tüm seçimler silindi.")
-        self.analyze_button.setEnabled(False)
+
+        self.save_and_analyze_button.setEnabled(False)
         self.remove_rectangle_button.setEnabled(False)
         self.remove_point_button.setEnabled(False)
         self.cancel_button.setEnabled(False)
+        self.load_image_button.setEnabled(True)
 
 
     def remove_last_rectangle(self):

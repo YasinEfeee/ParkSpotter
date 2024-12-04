@@ -1,5 +1,4 @@
-# Model and prediction
-
+#model_and_prediction.py
 from ultralytics import YOLO
 import numpy as np
 import cv2
