@@ -1,0 +1,19 @@
+# Firebase Service Account Key
+serviceAccountKey(ParkSpotter).json
+
+# Çevre Değişken Dosyası
+.env
+
+# PyCharm İle İlgili Geçici Dosyalar
+.idea/
+
+# Python Geçici Dosyaları
+*.pyc
+__pycache__/
+
+# Sanal Ortam
+.venv/
+
+# Diğer Geçici Dosyalar
+temp_image.jpg
+temp_parking_spot_*.json

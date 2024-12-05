@@ -2,7 +2,7 @@
 import sys
 import cv2
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QLabel, QVBoxLayout, QWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QLabel, QVBoxLayout, QWidget, QMessageBox,  QInputDialog
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from mpl_toolkits.axisartist import FloatingAxes
@@ -263,10 +263,26 @@ class MainWindow(QMainWindow):
             QMessageBox.No
         )
 
-        if reply == QMessageBox.Yes:
-            self.manager.save_parking_data(self.image_path)
+        # Kullanıcıdan park alanı ismi al
+        parking_lot_name, ok = QInputDialog.getText(
+            self,
+            "Park Alanı Adı",
+            "Analiz tamamlandı. Kaydetmek için bir isim girin:"
+        )
+
+        if ok and parking_lot_name.strip():
+            try:
+                # Firebase'e yükleme
+                self.manager.upload_to_firebase(parking_lot_name.strip())
+                QMessageBox.information(
+                    self, "Başarılı", f"{parking_lot_name} adlı park alanı başarıyla Firebase'e yüklendi."
+                )
+            except Exception as e:
+                QMessageBox.critical(
+                    self, "Hata", f"Firebase'e yükleme sırasında bir hata oluştu: {e}"
+                )
         else:
-            QMessageBox.information(self, "Bilgi", "Veriler kaydedilmedi.")
+            QMessageBox.information(self, "Bilgi", "Kaydetme işlemi iptal edildi.")
 
 
     def select_parking(self):

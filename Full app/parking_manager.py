@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import QMessageBox
 import numpy as np
 import os
 import json
-import firebase_admin
-from firebase_admin import credentials, storage
+from firebase_uploader import FirebaseUploader
+from dotenv import load_dotenv
 
 
 class ParkingManager:
@@ -163,7 +163,7 @@ class ParkingManager:
             self.update_display()
 
 
-    def save_parking_data(self, image_path):
+    '''def save_parking_data(self, image_path):
         """
         Park alanlarını ve seçilen dikdörtgenleri belirtilen klasör yapısında kaydeder.
         """
@@ -203,7 +203,44 @@ class ParkingManager:
             import traceback
             error_message = f"Hata oluştu: {e}\n{traceback.format_exc()}"
             print(error_message)
-            QMessageBox.critical(None, "Kaydetme Hatası", error_message)
+            QMessageBox.critical(None, "Kaydetme Hatası", error_message)'''
+
+    def upload_to_firebase(self, parking_lot_name):
+        """
+        Park alanlarını sadece Firebase'e yükler.
+        :param parking_lot_name: Firebase'de kullanılacak park alanı klasör adı.
+        """
+        try:
+            # Ortam değişkeninden bucket_name alınır
+            load_dotenv()  # .env dosyasını yükle
+            bucket_name = os.getenv("FIREBASE_BUCKET")
+
+            if not bucket_name:
+                raise ValueError("Firebase bucket adı belirtilmemiş.")
+
+            uploader = FirebaseUploader(bucket_name)
+
+            # Görüntüyü Firebase'e yükle
+            if self.image is not None:
+                temp_image_path = "temp_image.jpg"  # Geçici bir dosya oluşturulur
+                cv2.imwrite(temp_image_path, self.image)
+                uploader.upload_file(temp_image_path, f"parking_lots/{parking_lot_name}/original_image.jpg")
+                os.remove(temp_image_path)  # Geçici dosyayı kaldır
+
+            # JSON dosyalarını Firebase'e yükle
+            for i, rect in enumerate(self.rectangles):
+                parking_spot_data = {"rectangle": rect}
+                temp_json_path = f"temp_parking_spot_{i + 1}.json"
+                with open(temp_json_path, "w") as f:
+                    json.dump(parking_spot_data, f)
+
+                uploader.upload_file(temp_json_path, f"parking_lots/{parking_lot_name}/parking_spot_{i + 1}.json")
+                os.remove(temp_json_path)  # Geçici JSON dosyasını kaldır
+
+            QMessageBox.Information(None, Başarılı, "Park alanı {parking_lot_name}, Firebase'e başarıyla yüklendi.")
+
+        except Exception as e:
+            print(f"Hata: {e}")
 
 
     def check_parking_status(self, image_path):
