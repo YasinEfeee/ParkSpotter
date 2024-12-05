@@ -5,14 +5,14 @@ serviceAccountKey(ParkSpotter).json
 .env
 
 # PyCharm İle İlgili Geçici Dosyalar
-.idea/
+.idea
 
 # Python Geçici Dosyaları
 *.pyc
-__pycache__/
+__pycache__
 
 # Sanal Ortam
-.venv/
+.venv
 
 # Diğer Geçici Dosyalar
 temp_image.jpg
