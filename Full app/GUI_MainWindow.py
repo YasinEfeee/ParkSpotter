@@ -274,9 +274,7 @@ class MainWindow(QMainWindow):
             try:
                 # Firebase'e yükleme
                 self.manager.upload_to_firebase(parking_lot_name.strip())
-                QMessageBox.information(
-                    self, "Başarılı", f"{parking_lot_name} adlı park alanı başarıyla Firebase'e yüklendi."
-                )
+
             except Exception as e:
                 QMessageBox.critical(
                     self, "Hata", f"Firebase'e yükleme sırasında bir hata oluştu: {e}"
