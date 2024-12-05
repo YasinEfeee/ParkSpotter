@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QMessageBox
 import numpy as np
 import os
 import json
+import firebase_admin
+from firebase_admin import credentials, storage
 
 
 class ParkingManager:

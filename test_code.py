@@ -80,7 +80,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.image_label)
 
         # OpenCV ile bir görüntü yükleyelim
-        image = cv2.imread('C:/Users/Nurum/PycharmProjects/2204 ParkSpotter/Full app/Images/IMG_4343.JPEG')
+        image = cv2.imread('File Path')
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         self.image_label.set_image(image)
 

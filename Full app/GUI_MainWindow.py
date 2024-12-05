@@ -157,7 +157,7 @@ class MainWindow(QMainWindow):
 
     def load_image(self):
         file_dialog = QFileDialog()
-        file_path, _ = file_dialog.getOpenFileName(self, "Görüntü Yükle", "", "Images (*.png *.jpg *.jpeg)")
+        file_path, _ = file_dialog.getOpenFileName(self, "Görüntü Yükle", "", "Tests_Images (*.png *.jpg *.jpeg)")
         if file_path:
             self.image_path = file_path
             self.image = cv2.imread(file_path)
