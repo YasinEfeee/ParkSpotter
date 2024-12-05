@@ -1,4 +1,4 @@
-import sys
+'''import sys
 import cv2
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
 from PyQt5.QtGui import QPixmap, QPainter, QPen
@@ -94,3 +94,4 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
+'''
