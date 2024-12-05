@@ -10,7 +10,6 @@ serviceAccountKey(ParkSpotter).json
 # Python Geçici Dosyaları
 *.pyc
 __pycache__/
-.pt
 
 # Sanal Ortam
 .venv/
