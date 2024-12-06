@@ -70,7 +70,7 @@ class MainWindow(BaseWindow):
 
 
         #"Park Alanı Seçimini İptal Et" butonu
-        self.cancel_button = QPushButton("Park Alanı Seçimini İptal Et")
+        self.cancel_button = QPushButton("Park Alanı Seçimini İptal Et / Sıfırla")
         self.cancel_button.clicked.connect(self.cancel_operation)
         self.cancel_button.setEnabled(False)
         layout.addWidget(self.cancel_button)
@@ -293,17 +293,29 @@ class MainWindow(BaseWindow):
 
     def cancel_operation(self):
         """İşlemi iptal eder."""
-        if self.manager.opencv_window_open:
-            self.manager.opencv_window_open = False
-            cv2.destroyWindow("Park Alanlarini Sec")
-            self.manager.reset()
-            QMessageBox.information(self, "İptal Edildi", "İşlem iptal edildi ve tüm seçimler silindi.")
 
-        self.save_and_analyze_button.setEnabled(False)
-        self.remove_rectangle_button.setEnabled(False)
-        self.remove_point_button.setEnabled(False)
-        self.cancel_button.setEnabled(False)
-        self.load_image_button.setEnabled(True)
+        reply = QMessageBox.question(
+            self,
+            "Çıkış Onayı",
+            "Çıkış yapmak istediğinize emin misiniz? Bütün seçimler sıfırlanacktır.",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            if self.manager.opencv_window_open:
+                self.manager.opencv_window_open = False
+                cv2.destroyWindow("Park Alanlarini Sec")
+                self.manager.reset()
+                QMessageBox.information(self, "İptal Edildi", "İşlem iptal edildi ve tüm seçimler silindi.")
+
+            self.save_and_analyze_button.setEnabled(False)
+            self.remove_rectangle_button.setEnabled(False)
+            self.remove_point_button.setEnabled(False)
+            self.cancel_button.setEnabled(False)
+            self.load_image_button.setEnabled(True)
+        else:
+            pass
 
 
     def remove_last_rectangle(self):
