@@ -1,4 +1,4 @@
-#parking_manager.py
+# parking_manager.py
 import cv2
 from PyQt5.QtWidgets import QMessageBox
 import numpy as np

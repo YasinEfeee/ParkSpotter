@@ -1,4 +1,4 @@
-#GUI_MainWindow.py
+# GUI_MainWindow.py
 import sys
 import cv2
 
@@ -8,9 +8,10 @@ from PyQt5.QtCore import Qt
 from mpl_toolkits.axisartist import FloatingAxes
 
 from parking_manager import ParkingManager
+from GUI_BaseWindow import BaseWindow
 
 
-class MainWindow(QMainWindow):
+class MainWindow(BaseWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Park Alanı Tespiti")
@@ -101,14 +102,8 @@ class MainWindow(QMainWindow):
                 # Park alanı seçme işlemini iptal et ve pencereyi kapat
                 self.manager.opencv_window_open = False  # Döngüyü sonlandırmak için
                 cv2.destroyAllWindows()
-                self.manager.reset()  # İşlemleri sıfırla
-
-                self.remove_rectangle_button.setEnabled(False)
-                self.remove_point_button.setEnabled(False)
-                self.analyze_button.setEnabled(False)
-                self.cancel_button.setEnabled(False)
-
                 QMessageBox.information(self, "İşlem İptal Edildi", "'Park Alanı Seçme' işlemi iptal edildi.")
+                self.manager.reset()  # İşlemleri sıfırla
                 # Pencere kapatma işlemini onayla
                 event.accept()
             else:
@@ -137,22 +132,7 @@ class MainWindow(QMainWindow):
                 event.ignore()
                 return
 
-        # Genel bir onay mesajı göster
-        reply = QMessageBox.question(
-            self,
-            "Onay",
-            "Programı kapatmak istediğinize emin misiniz?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
-
-        if reply == QMessageBox.Yes:
-            # Pencere kapatma işlemini kabul et
-            event.accept()
-        else:
-            # Kapatma işlemini iptal et
-            event.ignore()
-            return
+        super().closeEvent(event)
 
 
     def load_image(self):
@@ -209,6 +189,7 @@ class MainWindow(QMainWindow):
         """
         Park alanlarını analiz eder ve kullanıcıya kaydetmek isteyip istemediğini sorar.
         """
+
         # Görüntü ve park alanı kontrolü
         if not self.image_path:
             QMessageBox.warning(
@@ -248,10 +229,15 @@ class MainWindow(QMainWindow):
 
         # Park durumu analizini başlat
         try:
+            self.select_parking_button.setEnabled(False)
+            self.load_image_button.setEnabled(False)
+
             print("Analiz ediliyor...")
             self.manager.check_parking_status(self.image_path)
         except Exception as e:
             print(f"Analiz sırasında bir hata oluştu: {e}")
+            QMessageBox.critical(self, "Hata", f"Analiz sırasında bir hata oluştu:\n{e}")
+            return
 
 
         # Kullanıcıya kaydetmek isteyip istemediğini sor
@@ -263,24 +249,31 @@ class MainWindow(QMainWindow):
             QMessageBox.No
         )
 
-        # Kullanıcıdan park alanı ismi al
-        parking_lot_name, ok = QInputDialog.getText(
-            self,
-            "Park Alanı Adı",
-            "Analiz tamamlandı. Kaydetmek için bir isim girin:"
-        )
-
-        if ok and parking_lot_name.strip():
+        # Kullanıcıdan park alanı ismi al ve Firebase'e yükle
+        if reply == QMessageBox.Yes:
+            # Kaydetme işlemi
             try:
-                # Firebase'e yükleme
-                self.manager.upload_to_firebase(parking_lot_name.strip())
+                parking_lot_name, ok = QInputDialog.getText(self, "Kaydet",
+                                                            "Park alanını kaydetmek için bir isim girin:")
+                if ok and parking_lot_name.strip():
+                    self.manager.upload_to_firebase(parking_lot_name)
+                    QMessageBox.information(self, "Başarılı",
+                                            f"Park alanı {parking_lot_name}, Firebase'e başarıyla yüklendi.")
+                    # `cv2` penceresini kapat
+                    cv2.destroyAllWindows()
+
+                    # SelectionWindow'u aç ve MainWindow'u kapat
+                    from GUI_SelectionWindow import SelectionWindow  # Lazy import
+                    self.selection_window = SelectionWindow()
+                    self.selection_window.show()
+                    self.close()
 
             except Exception as e:
-                QMessageBox.critical(
-                    self, "Hata", f"Firebase'e yükleme sırasında bir hata oluştu: {e}"
-                )
+                QMessageBox.critical(self, "Hata", f"Kaydetme işlemi sırasında bir hata oluştu: {e}")
         else:
-            QMessageBox.information(self, "Bilgi", "Kaydetme işlemi iptal edildi.")
+            QMessageBox.information(self, "Bilgi", "Veriler kaydedilmedi.")
+            self.select_parking_button.setEnabled(True)
+            self.load_image_button.setEnabled(True)
 
 
     def select_parking(self):
@@ -325,8 +318,21 @@ class MainWindow(QMainWindow):
 
 
     def go_back(self):
-        """Geri butonuna basıldığında ana menüye döner."""
-        from GUI_SelectionWindow import SelectionWindow # Lazy import
-        self.selection_window = SelectionWindow()
-        self.selection_window.show()
-        self.close()
+        """
+        Geri butonuna basıldığında ana menüye döner.
+        """
+        reply = QMessageBox.question(
+            self,
+            "Çıkış Onayı",
+            "Ayrılmak istediğinize emin misiniz?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            from GUI_SelectionWindow import SelectionWindow  # Lazy import
+            self.selection_window = SelectionWindow()
+            self.selection_window.show()
+            self.close()
+        else:
+            pass

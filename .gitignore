@@ -17,3 +17,6 @@ __pycache__/
 # Diğer Geçici Dosyalar/ Other Temprory Files
 temp_image.jpg
 temp_parking_spot_*.json
+
+# Test kod / test code
+test_code.py

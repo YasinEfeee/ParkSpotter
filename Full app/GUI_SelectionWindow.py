@@ -1,4 +1,4 @@
-#GUI_SelectionWindow.py
+# GUI_SelectionWindow.py
 import sys
 import cv2
 
