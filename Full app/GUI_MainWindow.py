@@ -257,8 +257,7 @@ class MainWindow(BaseWindow):
                                                             "Park alanını kaydetmek için bir isim girin:")
                 if ok and parking_lot_name.strip():
                     self.manager.upload_to_firebase(parking_lot_name)
-                    QMessageBox.information(self, "Başarılı",
-                                            f"Park alanı {parking_lot_name}, Firebase'e başarıyla yüklendi.")
+
                     # `cv2` penceresini kapat
                     cv2.destroyAllWindows()
 
