@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMessageBox
 import numpy as np
 import os
 import json
-from firebase_uploader import FirebaseUploader
+from firebase_operations import FirebaseOperations
 from dotenv import load_dotenv
 
 
@@ -16,7 +16,9 @@ class ParkingManager:
         self.original_image = None  # Orijinal görüntüyü saklamak için
         self.scaled_image = None
         self.SCALE_FACTOR = 0.6
-        self.opencv_window_open = False
+        self.opencv_window_open = False # 'Park Alanlarini Sec' pencresi için bayrak
+        self.analysis_image = None  # Analiz sonucunu saklamak için
+        self.firebase_operations = FirebaseOperations()
 
     def set_image(self, image):
         self.image = image.copy()
@@ -176,13 +178,11 @@ class ParkingManager:
             if not bucket_name:
                 raise ValueError("Firebase bucket adı belirtilmemiş.")
 
-            uploader = FirebaseUploader()
-
             # Görüntüyü Firebase'e yükle
             if self.image is not None:
                 temp_image_path = "temp_image.jpg"  # Geçici bir dosya oluşturulur
                 cv2.imwrite(temp_image_path, self.image)
-                uploader.upload_file(temp_image_path, f"parking_lots/{parking_lot_name}/original_image.jpg")
+                self.firebase_operations.upload_file(temp_image_path, f"parking_lots/{parking_lot_name}/original_image.jpg")
                 os.remove(temp_image_path)  # Geçici dosyayı kaldır
 
             # JSON dosyalarını Firebase'e yükle
@@ -192,10 +192,9 @@ class ParkingManager:
                 with open(temp_json_path, "w") as f:
                     json.dump(parking_spot_data, f)
 
-                uploader.upload_file(temp_json_path, f"parking_lots/{parking_lot_name}/parking_spot_{i + 1}.json")
+                self.firebase_operations.upload_file(temp_json_path, f"parking_lots/{parking_lot_name}/parking_spot_{i + 1}.json")
                 os.remove(temp_json_path)  # Geçici JSON dosyasını kaldır
 
-            QMessageBox.information(None, "Başarılı", f"Park alanı {parking_lot_name}, Firebase'e başarıyla yüklendi.")
 
         except Exception as e:
             import traceback
@@ -246,6 +245,8 @@ class ParkingManager:
             cv2.putText(detection_image, "Outside", (int(vehicle_center[0]), int(vehicle_center[1] - 15)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
 
+        self.analysis_image = detection_image
+
         # Sonuçları ekranda göster
         scaled_image = cv2.resize(detection_image, None, fx=self.SCALE_FACTOR, fy=self.SCALE_FACTOR,
                                   interpolation=cv2.INTER_AREA)
@@ -253,3 +254,12 @@ class ParkingManager:
         cv2.imshow("Park Durumu", scaled_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+
+
+    def get_analysis_result(self):
+        """
+        Analiz sonucu görselini döndürür.
+        """
+        if self.analysis_image is None:
+            raise ValueError("Analiz sonucu henüz oluşturulmadı.")
+        return self.analysis_image

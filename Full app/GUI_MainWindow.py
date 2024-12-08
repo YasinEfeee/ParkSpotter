@@ -6,9 +6,11 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog,
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from mpl_toolkits.axisartist import FloatingAxes
+from sympy.physics.units.definitions.dimension_definitions import information
 
 from parking_manager import ParkingManager
 from GUI_BaseWindow import BaseWindow
+from firebase_operations import FirebaseOperations
 
 
 class MainWindow(BaseWindow):
@@ -19,6 +21,7 @@ class MainWindow(BaseWindow):
         self.analysis_done = False  # Analiz yapılıp yapılmadığını kontrol eden bayrak
 
         self.manager = ParkingManager()
+        self.firebase_operations = FirebaseOperations()
 
         # Layout oluştur
         layout = QVBoxLayout()
@@ -231,7 +234,6 @@ class MainWindow(BaseWindow):
         try:
             self.select_parking_button.setEnabled(False)
             self.load_image_button.setEnabled(False)
-
             print("Analiz ediliyor...")
             self.manager.check_parking_status(self.image_path)
         except Exception as e:
@@ -249,30 +251,113 @@ class MainWindow(BaseWindow):
             QMessageBox.No
         )
 
-        # Kullanıcıdan park alanı ismi al ve Firebase'e yükle
         if reply == QMessageBox.Yes:
-            # Kaydetme işlemi
-            try:
+            while True:
+                # Kullanıcıdan park alanı ismi al
                 parking_lot_name, ok = QInputDialog.getText(self, "Kaydet",
                                                             "Park alanını kaydetmek için bir isim girin:")
-                if ok and parking_lot_name.strip():
+                if not ok:  # Kullanıcı iptal ettiyse döngüden çık
+                    QMessageBox.information(self, "Bilgi", "Kaydetme işlemi iptal edildi.")
+                    break
+
+                if not parking_lot_name.strip():  # Boş isim girildiyse uyarı ver ve tekrar sor
+                    QMessageBox.warning(self, "Uyarı", "Park alanı ismi boş bırakılamaz!")
+                    continue
+
+                try:
+                    # Park alanı adı kontrolü
+                    if self.firebase_operations.check_parking_lot_exists(parking_lot_name):
+                        QMessageBox.warning(None, "Başarısız",
+                                            f"{parking_lot_name} adlı bir park alanı zaten mevcut.")
+                        continue  # Tekrar isim sormak için döngüye dön
+
+                    # Geçerli bir isim girildiyse işlemi tamamla
                     self.manager.upload_to_firebase(parking_lot_name)
+
+                    # Analiz işlemleri sonucunda oluşturulan görsel (OpenCV penceresinde gösterilen görsel)
+                    analysis_image = self.manager.get_analysis_result()
+
+                    # Firebase'e yükleme
+                    uploader = FirebaseOperations()
+                    uploader.upload_analysis_result(analysis_image, parking_lot_name)
 
                     # `cv2` penceresini kapat
                     cv2.destroyAllWindows()
+
+                    QMessageBox.information(self, "Başarılı",
+                                            f"Park alanı {parking_lot_name} ve analiz sonuçları Firebase'e başarıyla yüklendi.")
 
                     # SelectionWindow'u aç ve MainWindow'u kapat
                     from GUI_SelectionWindow import SelectionWindow  # Lazy import
                     self.selection_window = SelectionWindow()
                     self.selection_window.show()
                     self.close()
+                    break  # Döngüden çık
 
-            except Exception as e:
-                QMessageBox.critical(self, "Hata", f"Kaydetme işlemi sırasında bir hata oluştu: {e}")
+                except Exception as e:
+                    QMessageBox.critical(self, "Hata", f"Kaydetme işlemi sırasında bir hata oluştu: {e}")
+                    break
         else:
             QMessageBox.information(self, "Bilgi", "Veriler kaydedilmedi.")
             self.select_parking_button.setEnabled(True)
             self.load_image_button.setEnabled(True)
+
+        """# Kullanıcıdan park alanı ismi al ve Firebase'e yükle
+        if reply == QMessageBox.Yes:
+            while True:
+                # Kaydetme işlemi
+                try:
+                    parking_lot_name, ok = QInputDialog.getText(self, "Kaydet",
+                                                                "Park alanını kaydetmek için bir isim girin:")
+
+                    if not ok or not parking_lot_name.strip():
+                        QMessageBox.warning(self, "Uyarı", "Park alanı ismi boş bırakılamaz!")
+                        continue # Tekrar isim sormak için döngüye dön
+
+                    # Park alanı adı kontrolü
+                    if self.firebase_operations.check_parking_lot_exists(parking_lot_name):
+                        QMessageBox.warning(None, "Başarısız",
+                                            f"{parking_lot_name} adlı bir park alanı zaten mevcut.")
+                        continue # Tekrar isim sormak için döngüye dön
+
+                    if ok and parking_lot_name.strip():
+
+                        self.manager.upload_to_firebase(parking_lot_name)
+
+                        # Analiz işlemleri sonucunda oluşturulan görsel (OpenCV penceresinde gösterilen görsel)
+                        analysis_image = self.manager.get_analysis_result()  # Analiz görselini al
+
+                        # Firebase'e yükleme
+                        uploader = FirebaseOperations()
+                        uploader.upload_analysis_result(analysis_image, parking_lot_name)
+
+                        # `cv2` penceresini kapat
+                        cv2.destroyAllWindows()
+
+                        QMessageBox.information(None, "Başarılı",
+                                                f"Park alanı {parking_lot_name} ve analiz sonuçları Firebase'e başarıyla yüklendi.")
+
+                        # SelectionWindow'u aç ve MainWindow'u kapat
+                        from GUI_SelectionWindow import SelectionWindow  # Lazy import
+                        self.selection_window = SelectionWindow()
+                        self.selection_window.show()
+                        self.close()
+
+                except Exception as e:
+                    import traceback
+
+                    error_message = f"Hata oluştu: {e}\n{traceback.format_exc()}"
+                    print(error_message)
+
+                    QMessageBox.critical(self, "Hata", f"Kaydetme işlemi sırasında bir hata oluştu: {e}")
+                    # Süreci sıfırla
+                    print(f"Hata oluştu ve işlem sıfırlandı: {e}")
+                    self.reset()
+
+        else:
+            QMessageBox.information(self, "Bilgi", "Veriler kaydedilmedi.")
+            self.select_parking_button.setEnabled(True)
+            self.load_image_button.setEnabled(True)"""
 
 
     def select_parking(self):

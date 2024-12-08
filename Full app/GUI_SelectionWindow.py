@@ -44,7 +44,12 @@ class SelectionWindow(QMainWindow):
 
     def open_saved_parking_window(self):
         """Kaydedilmiş park alanı kullanma penceresini aç."""
-        from GUI_SavedParkingWindow import SavedParkingWindow
-        self.saved_parking_window = SavedParkingWindow()
-        self.saved_parking_window.show()
-        self.close()
+        try:
+            from GUI_SavedParkingWindow import SavedParkingWindow
+            self.saved_parking_window = SavedParkingWindow()
+            self.saved_parking_window.show()
+            self.close()
+        except Exception as e:
+            import traceback
+            error_message = f"Hata oluştu: {e}\n{traceback.format_exc()}"
+            print(error_message)

@@ -1,4 +1,4 @@
-#App_Main.py
+# App_Main.py
 import sys
 from PyQt5.QtWidgets import QApplication
 from GUI_SelectionWindow import SelectionWindow
