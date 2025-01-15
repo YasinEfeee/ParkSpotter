@@ -39,3 +39,14 @@ Sorunsuz entegrasyon sağlamak için Firebase hesabınızı yapılandırdığın
 4. **Analiz Sonuçları:** Sonuçları hem görsel hem de Firebase veri tabanında görüntüleyin.
 5. **Engelli Park Alanları:** Engelli bireylere ayrılmış park alanlarının seçin ve özel takibini yapın.
 
+## Katkıda Bulunun
+
+ParkSpotter projesini daha iyi bir hale getirmek için öneri ve fikirlerinize açığız. Projeye katkıda bulunmak için aşağıdaki yolları kullanabilirsiniz:
+
+- **Hata ve Öneri Bildirimi:** Projeyle ilgili karşılaştığınız sorunları ya da geliştirme önerilerinizi paylaşmak için lütfen bir "issue" açın. Her geri bildirim bizim için çok değerli!
+- **Paylaşım:** Projeyi arkadaşlarınızla ve ilgi duyabilecek kişilerle paylaşarak daha geniş bir kitleye ulaşmamıza yardımcı olabilirsiniz.
+
+### İletişim
+
+Daha fazla bilgi almak ya da katkılarınızı paylaşmak için bizimle iletişime geçmekten çekinmeyin. Desteğiniz için şimdiden teşekkür ederiz!
+
