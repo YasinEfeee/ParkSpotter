@@ -38,3 +38,16 @@ Make sure to configure your Firebase account and provide the `serviceAccountKey.
 3. **Real-Time Analysis:** Monitor parking lot occupancy using live camera streams.
 4. **Analysis Results:** View results both visually and in the Firebase database.
 5. **Disabled Parking Spots:** Select and monitor parking spots designated for individuals with disabilities.
+
+
+## Contribute
+
+We are open to your suggestions and ideas to make the ParkSpotter project even better. You can contribute to the project in the following ways:
+
+- **Report Issues and Suggestions:** If you encounter any problems or have improvement ideas, please open an "issue." Every piece of feedback is invaluable to us!
+- **Spread the Word:** Share the project with your friends and anyone who might be interested, helping us reach a broader audience.
+
+### Contact
+
+Feel free to reach out to us for more information or to share your contributions. Thank you in advance for your support!
+
