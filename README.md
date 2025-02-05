@@ -1,6 +1,6 @@
 # Bu proje TÜBİTAK 2204-A için geliştirilmiştir! 
 
-# GitHub deposu hala geliştirme sürecindedir!
+## GitHub deposu hala geliştirme sürecindedir!
 
 # ParkSpotter
 
