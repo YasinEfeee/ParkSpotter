@@ -31,6 +31,8 @@ As urbanization increases, finding available parking spaces has become a signifi
 - **Firebase Integration:** Storing analysis results in the cloud using a database connection.
 - **User-Friendly Interface:** Easy-to-use PyQt5-based graphical user interface.
 - **Monitoring:** Efficient parking lot management and anomaly detection.
+- **Parking Lot Redesign:** Empowers users to redesign their parking lots, with all changes automatically saved to Firebase.
+
 
 ## Technologies Used
 
@@ -41,6 +43,7 @@ As urbanization increases, finding available parking spaces has become a signifi
 - **Database:** Firebase
 - **IDE:** PyCharm
 
+
 ## Usage
 
 1. **Upload Visuals:** Start analysis by uploading camera images or photos.
@@ -48,6 +51,15 @@ As urbanization increases, finding available parking spaces has become a signifi
 3. **Real-Time Analysis:** Monitor parking lot occupancy using live camera streams.
 4. **Analysis Results:** View results both visually and in the Firebase database.
 5. **Disabled Parking Spots:** Select and monitor parking spots designated for individuals with disabilities.
+
+
+## Application Main Window
+
+![image alt](https://github.com/YasinEfeee/ParkSpotter/blob/43947c8396f464e87bd02297a8e1635db1595e50/Full_app_with_live_video_and_camera_tracing/In-app%20images/%C5%9Eekil%20main.jpg)
+
+## Application Analysis Example
+
+![image alt](https://github.com/YasinEfeee/ParkSpotter/blob/43947c8396f464e87bd02297a8e1635db1595e50/Full_app_with_live_video_and_camera_tracing/In-app%20images/%C5%9Eekil%205.jpg)
 
 
 ## Future Improvements
@@ -70,4 +82,6 @@ We are open to your suggestions and ideas to make the ParkSpotter project even b
 ### Contact
 
 Feel free to reach out to us for more information or to share your contributions. Thank you in advance for your support!
+
+
 
