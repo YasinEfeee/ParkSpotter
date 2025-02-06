@@ -27,6 +27,7 @@ Kentleşmenin artmasıyla birlikte, kullanılabilir park alanlarını bulmak ön
 - **Firebase Entegrasyonu:** Veri tabanı bağlantısı ile analiz sonuçlarının bulut üzerinde depolanması.
 - **Kullanıcı Dostu Arayüz:** PyQt5 tabanlı grafiksel arayüz ile kolay kullanım.
 - **Moniterizasyon:** Park alanlarının etkin yönetimi ve anomalilerin tespiti.
+- **Otopark Yeniden Düzenleme:** Kullanıcıların otoparklarını yeniden düzenlemelerine olanak tanır ve tüm değişiklikler otomatik olarak Firebase'e kaydedilir.
 
 ## Kullanılan Teknolojiler
 
@@ -44,6 +45,14 @@ Kentleşmenin artmasıyla birlikte, kullanılabilir park alanlarını bulmak ön
 3. **Gerçek Zamanlı Analiz:** Canlı kamera akışlarını kullanarak park alanı doluluk durumunu izleyin.
 4. **Analiz Sonuçları:** Sonuçları hem görsel hem de Firebase veri tabanında görüntüleyin.
 5. **Engelli Park Alanları:** Engelli bireylere ayrılmış park alanlarının seçin ve özel takibini yapın.
+
+## Uygulama Ana Penceresi
+
+![image alt](https://github.com/YasinEfeee/ParkSpotter/blob/43947c8396f464e87bd02297a8e1635db1595e50/Full_app_with_live_video_and_camera_tracing/In-app%20images/%C5%9Eekil%20main.jpg)
+
+## Uygulama Analizi Örneği
+
+![image alt](https://github.com/YasinEfeee/ParkSpotter/blob/43947c8396f464e87bd02297a8e1635db1595e50/Full_app_with_live_video_and_camera_tracing/In-app%20images/%C5%9Eekil%205.jpg)
 
 ## Gelecekteki İyileştirmeler
 
