@@ -1,16 +1,26 @@
-# This project was developed for TÜBİTAK 2204-A!
-
-## The GitHub repository is still under development!
-
 # ParkSpotter
+
+## This project was developed for TÜBİTAK 2204-A!
 
 This project aims to make the parking search process faster, more efficient, and accessible with an AI-supported system.  
 The system stands out with real-time monitoring in marketplaces, shopping malls, and private parking lots, providing priority access for individuals with disabilities, anomaly detection, and a low-cost technology infrastructure.  
 Developed using Python and the YOLOv8 model, the project contributes to environmental sustainability goals while optimizing traffic flow.
 
-## !! Firebase Integration Warning  
+## Firebase Integration Warning !!
 This project uses Firebase as its database to efficiently store and manage parking data.  
 Make sure to configure your Firebase account and provide the `serviceAccountKey.json` file for seamless integration.
+
+## Project Purpose
+
+As urbanization increases, finding available parking spaces has become a significant challenge, leading to time loss, financial costs, and environmental concerns. The ParkSpotter system was developed to:
+
+- **Optimize the parking search process**, making it faster and more efficient.
+
+- **Improve accessibility for disabled individuals**, ensuring designated spots are used correctly.
+
+- **Provide a cost-effective and scalable AI-based solution** for municipalities and private parking lots.
+
+- **Detect parking anomalies**, such as unauthorized usage of reserved spots.
 
 ## Features
 
@@ -40,7 +50,17 @@ Make sure to configure your Firebase account and provide the `serviceAccountKey.
 5. **Disabled Parking Spots:** Select and monitor parking spots designated for individuals with disabilities.
 
 
-## Contribute
+## Future Improvements
+
+- Enhance user experience and improve system accuracy.
+
+- Improve **real-time performance** of the AI model.
+
+- Optimize **database operations** for faster response times.
+
+- Expand to a **mobile app** version for user-friendly interaction.
+
+## Contribute and Support
 
 We are open to your suggestions and ideas to make the ParkSpotter project even better. You can contribute to the project in the following ways:
 
