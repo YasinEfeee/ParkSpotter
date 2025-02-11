@@ -61,6 +61,10 @@ As urbanization increases, finding available parking spaces has become a signifi
 
 ![image alt](https://github.com/YasinEfeee/ParkSpotter/blob/43947c8396f464e87bd02297a8e1635db1595e50/Full_app_with_live_video_and_camera_tracing/In-app%20images/%C5%9Eekil%205.jpg)
 
+## Parking Spot Selecting
+
+![image alt](https://github.com/YasinEfeee/ParkSpotter/blob/b34d4735ced14b02195b081a865ff75a05e215f7/Full_app_with_live_video_and_camera_tracing/In-app%20images/Parking%20spot%20selecting.jpg)
+
 
 ## Future Improvements
 
