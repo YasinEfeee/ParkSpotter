@@ -1,7 +1,5 @@
 # ParkSpotter
 
-## Bu proje TÜBİTAK 2204-A için geliştirilmiştir! 
-
 Bu proje, yapay zekâ destekli bir sistem ile park alanı arama sürecini daha hızlı, verimli ve erişilebilir hale getirmeyi amaçlamaktadır.
 Sistem; çarşı, alışveriş merkezi ve özel mülk park alanlarında gerçek zamanlı izleme, engelli bireylere öncelikli erişim sağlama, anomalilerin tespiti ve düşük maliyetli teknoloji altyapısıyla öne çıkmaktadır.
 Python ve YOLOv8 modeli ile geliştirilen proje, çevresel sürdürülebilirlik hedeflerine katkı sunarken trafik akışını optimize etmeyi hedeflemektedir.
