@@ -43,6 +43,7 @@ Kentleşmenin artmasıyla birlikte, kullanılabilir park alanlarını bulmak ön
 3. **Gerçek Zamanlı Analiz:** Canlı kamera akışlarını kullanarak park alanı doluluk durumunu izleyin.
 4. **Analiz Sonuçları:** Sonuçları hem görsel hem de Firebase veri tabanında görüntüleyin.
 5. **Engelli Park Alanları:** Engelli bireylere ayrılmış park alanlarının seçin ve özel takibini yapın.
+6. **Veritabanına kaydet** Analiz sonuçlarını bir veritabanı bağlantısı kullanarak bulutta depolayın.
 
 ## Uygulama Ana Penceresi
 
