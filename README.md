@@ -49,6 +49,7 @@ As urbanization increases, finding available parking spaces has become a signifi
 3. **Real-Time Analysis:** Monitor parking lot occupancy using live camera streams.
 4. **Analysis Results:** View results both visually and in the Firebase database.
 5. **Disabled Parking Spots:** Select and monitor parking spots designated for individuals with disabilities.
+6. **Save to database** Storge analysis results in the cloud using a database connection.
 
 
 ## Application Main Window
